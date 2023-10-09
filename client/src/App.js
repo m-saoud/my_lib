@@ -1,11 +1,12 @@
 import './App.css';
-import InputBook from './components/InputBook';
-
+import  BookForm from './components/BookForm';
+import BookList from './components/BookList';
 function App() {
   return (
     <div className="App">
-      <h1>hello</h1>
-      <InputBook/>
+      <h1>Hello</h1>
+      <BookList />
+      <BookForm />
     </div>
   );
 }
