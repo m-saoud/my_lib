@@ -1,8 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { createBook, updateBook } from "./api";
+import { v4 as uuidv4 } from "uuid";
 
 const BookForm = ({ selectedBook, onSave }) => {
-  const [bookData, setBookData] = useState({ name: "", author: "", isbn: "" });
+  const [bookData, setBookData] = useState({
+    book_id: "",
+    name: "",
+    author: "",
+    isbn: "",
+  });
 
   useEffect(() => {
     if (selectedBook) {
@@ -16,17 +22,20 @@ const BookForm = ({ selectedBook, onSave }) => {
       const requestOptions = {
         method: selectedBook ? "PUT" : "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(bookData),
+        body: JSON.stringify({
+          ...bookData,
+          book_id: selectedBook ? selectedBook.book_id : uuidv4(),
+        }),
       };
 
       if (selectedBook) {
-        await updateBook(selectedBook.id, requestOptions);
+        await updateBook(selectedBook.book_id, requestOptions);
       } else {
         await createBook(requestOptions);
       }
 
       onSave();
-      setBookData({ name: "", author: "", isbn: "" });
+      setBookData({ book_id: "", name: "", author: "", isbn: "" });
     } catch (error) {
       console.error("Error:", error.message);
     }
@@ -36,7 +45,7 @@ const BookForm = ({ selectedBook, onSave }) => {
     <div>
       <h2>Add/Edit Books</h2>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="d-flex">
         <input
           type="text"
           placeholder="Title"

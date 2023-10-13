@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { fetchBooks, deleteBook } from "./api"; // Import the fetchBooks and deleteBook functions
-import BookForm from "./BookForm"; 
-import BookItem from "./BookItem"; 
+import { fetchBooks, deleteBook } from "./api";
+import BookForm from "./BookForm";
+import BookItem from "./BookItem";
 
 const BookList = () => {
   const [books, setBooks] = useState([]);
@@ -20,10 +20,15 @@ const BookList = () => {
 
   const handleDelete = async (id) => {
     try {
-      // Delete the book
-      await deleteBook(id);
-      // Remove the deleted book from the list
-      setBooks(books.filter((book) => book.id !== id));
+      // Check if the book id is defined before attempting to delete
+      if (id) {
+        // Delete the book
+        await deleteBook(id);
+        // Remove the deleted book from the list
+        setBooks(books.filter((book) => book.book_id !== id));
+      } else {
+        console.error("Book id is undefined or missing.");
+      }
     } catch (error) {
       console.error("Error deleting book:", error);
     }
@@ -31,16 +36,21 @@ const BookList = () => {
 
   return (
     <div>
-      <ul>
+      <h2 className="my-4">Book List</h2>
+
+      <ul className="list-group ">
         {books.map((book) => (
-          <li key={book.id}>
+          <li
+            key={book.book_id}
+            className=" list-unstyled d-flex justify-content-center "
+          >
             <BookItem
               book={book}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
+              onEdit={() => handleEdit(book)}
+              onDelete={() => handleDelete(book.id)}
             />
-           {/* <span><button onClick={() => handleEdit(book)}>Edit1</button>
-            <button onClick={() => handleDelete(book.id)}>Delete1</button></span>  */}
+            <button onClick={() => handleEdit(book)}>Edit1</button>
+            <button onClick={() => handleDelete(book.book_id)}>Delete1</button>
           </li>
         ))}
       </ul>
@@ -51,7 +61,6 @@ const BookList = () => {
           fetchBooks()
             .then((data) => setBooks(data))
             .catch((error) => console.error("Error fetching books:", error));
-          // Reset the selectedBook state
           setSelectedBook(null);
         }}
       />

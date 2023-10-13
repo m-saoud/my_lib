@@ -1,4 +1,4 @@
-const apiUrl = "http://localhost:5000/books";
+const apiUrl = "http://localhost:3000/books";
 
 // Function to fetch books
 const fetchBooks = async () => {
@@ -11,7 +11,7 @@ const fetchBooks = async () => {
     return data;
   } catch (error) {
     console.error(error.message);
-    throw error; // Rethrow the error to handle it outside the function
+    throw error;
   }
 };
 
@@ -35,18 +35,18 @@ const createBook = async (newBook) => {
 };
 
 // Function to update a book
-const updateBook = async (bookId, updatedBook) => {
+const updateBook = async (book_id, updatedBook) => {
   try {
-    const response = await fetch(`${apiUrl}/${bookId}`, {
+    const response = await fetch(`${apiUrl}/${book_id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(updatedBook),
     });
     if (!response.ok) {
-      throw new Error("Network response was not ok");
+      throw new Error("Network *(put) response was not ok");
     }
     const data = await response.json();
-    return data;
+    return data
   } catch (error) {
     console.error(error.message);
     throw error;
@@ -54,9 +54,9 @@ const updateBook = async (bookId, updatedBook) => {
 };
 
 // Function to delete a book
-const deleteBook = async (bookId) => {
+const deleteBook = async (book_id) => {
   try {
-    const response = await fetch(`${apiUrl}/${bookId}`, {
+    const response = await fetch(`${apiUrl}/${book_id}`, {
       method: "DELETE",
     });
     if (!response.ok) {

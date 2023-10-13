@@ -6,7 +6,7 @@ const { v4: uuidv4 } = require("uuid");
 const app = express();
 const bodyParser = require("body-parser");
 
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
@@ -24,10 +24,12 @@ app.get("/books", async (req, res) => {
 });
 
 //get book by ID
-app.get("/books/:id", async (req, res) => {
+app.get("/books/:book_id", async (req, res) => {
   try {
-    const { id } = req.params;
-    const bookById = await pool.query("SELECT * FROM books WHERE id=$1", [id]);
+    const { book_id } = req.params;
+    const bookById = await pool.query("SELECT * FROM books WHERE book_id=$1", [
+      book_id,
+    ]);
     if (bookById.rows.length === 0) {
       res.status(404).json({ error: "Book not found" });
     } else {
@@ -67,12 +69,12 @@ app.post("/books", async (req, res) => {
 });
 
 //put *(MODIFY THE BOOK CONTENT by ID)
-app.put("/books/:id", async (req, res) => {
+app.put("/books/:book_id", async (req, res) => {
   try {
     const { book_id } = req.params;
     const { name, author, isbn } = req.body;
     const updateBook = await pool.query(
-      "UPDATE public.books SET name = $1, author = $2, isbn = $3 WHERE id = $4 RETURNING * ",
+      "UPDATE public.books SET name = $1, author = $2, isbn = $3 WHERE book_id  = $4 RETURNING * ",
       [name, author, isbn, book_id]
     );
     if (updateBook.rows.length === 0) {
@@ -88,10 +90,13 @@ app.put("/books/:id", async (req, res) => {
 });
 
 //delete(DELETE THE BOOK BY ID)
-app.delete("/books/:id", async (req, res) => {
+app.delete("/books/:book_id", async (req, res) => {
   try {
-    const { id } = req.params;
-    const delettBook = await pool.query("DELETE FROM books WHERE id=$1", [id]);
+    const { book_id } = req.params;
+    const delettBook = await pool.query(
+      "DELETE FROM public.books WHERE book_id=$1",
+      [book_id]
+    );
     if (delettBook.rowCount === 0) {
       res.status(404).json({ Error: "Book not found" });
     } else {
